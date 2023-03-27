@@ -10,14 +10,13 @@
     internal class Program
     {
         
-        static void Main(string[] args)
+        static void Main()
         {
             //initialize variables
             var factory = new ConnectionFactory { HostName = "localhost" };
             using var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();
-            string exchangeCode = "Orders"; //not found
-            string username = "Default";
+            string exchangeCode = "Orders"; //not found            
             bool FINISHED = false;
             string input = "";                      
 
@@ -55,7 +54,7 @@
                 routingKey: string.Empty);
 
             //consuumer listener
-            EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
+            EventingBasicConsumer consumer = new (channel);
             consumer.Received += (model, ea) =>
             {
 
@@ -75,16 +74,14 @@
         {
             Console.WriteLine("\n\n\tConnecting...\n");
 
-
-            string username;
-            string choice;
+            
             bool buyOrSell;
 
             Console.WriteLine("\n\n\tEnter Username / Trader ID (no spaces): ");
-            username = Console.ReadLine();
+            string username = Console.ReadLine()!;
 
             Console.WriteLine("\n\n\tDo you wish to BUY or SELL?: ");
-            choice = Console.ReadLine();
+            string choice = Console.ReadLine()!;
 
             // buy choice
             if (choice == "BUY" || choice == "buy") // could force that into lowercase probably
@@ -95,7 +92,7 @@
                 // read from exchange? might need a list of stocks (can expand functionality for multiple stocks)
 
                 Console.WriteLine("\n\tWhat would you like to buy?: "); // can make stocks have a 3-4 letter code for simplicity
-                string stockChoice = Console.ReadLine();
+                string stockChoice = Console.ReadLine()!;
 
                 Console.WriteLine("\n\tHow many shares would you like to buy? (I.E. 100): "); // supposed to be a fixed quantity but i left it variable
                 int Qty = Convert.ToInt32(Console.ReadLine());
@@ -105,7 +102,7 @@
 
                 Console.WriteLine("\n\n\tBuying: " + Qty + "x shares of " + stockChoice + ", at $" + price + ".");
 
-                Exchange_Order newOrder = new Exchange_Order(buyOrSell,Qty,username,price);
+                Exchange_Order newOrder = new (buyOrSell,Qty,username,price,stockChoice);
                 SendOrder(channel, exchangeCode, newOrder);
 
             }
@@ -117,7 +114,7 @@
                 Console.Clear();
 
                 Console.WriteLine("\n\tWhat do you wish to sell?: ");
-                string stockChoice = Console.ReadLine();
+                string stockChoice = Console.ReadLine()!;
 
                 Console.WriteLine("\n\tHow many do you want to sell?: ");
                 int Qty = Convert.ToInt32(Console.ReadLine());
@@ -127,7 +124,7 @@
 
                 // confirm sale
                 Console.WriteLine("\n\tSelling: " + Qty + "x shares of " + choice + ", at $" + price + ".");
-                Exchange_Order newOrder = new Exchange_Order(buyOrSell, Qty, username, price);
+                Exchange_Order newOrder = new (buyOrSell, Qty, username, price,stockChoice);
                 SendOrder(channel, exchangeCode, newOrder);
             }
 
@@ -140,7 +137,7 @@
         static void SendOrder(IModel channel, string exchangeCode, Exchange_Order newOrder)
         {
                        
-            var encoded_message = newOrder.newMessage();
+            var encoded_message = newOrder.NewMessage();
 
             channel.BasicPublish(exchange: exchangeCode,
                 routingKey: string.Empty,
