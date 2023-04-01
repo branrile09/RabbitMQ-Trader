@@ -73,22 +73,22 @@
             Console.WriteLine("\n\n\tDo you wish to BUY or SELL?: ");
             string choice = Console.ReadLine()!;
 
-            string word1 = "";
-            string word2 = "";
+            string prefix1 = "";
+            string prefix2 = "";
 
             // buy choice
             if (choice.ToLower() == "buy") // could force that into lowercase probably
             {
                 buyOrSell = true;
-                word1 = "buy";
-                word2 = "pay";
+                prefix1 = "buy";
+                prefix2 = "pay";
 
             }
             else if (choice.ToLower() == "sell" )
             {
                 buyOrSell = false;
-                word1 = "sell";
-                word2 = "charge";
+                prefix1 = "sell";
+                prefix2 = "charge";
             }
             else
             {
@@ -104,16 +104,16 @@
             // read from exchange? might need a list of stocks (can expand functionality for multiple stocks)
             try
             {
-                Console.WriteLine($"\n\tWhat would you like to {word1}?: "); // can make stocks have a 3-4 letter code for simplicity
+                Console.WriteLine($"\n\tWhat would you like to {prefix1}?: "); // can make stocks have a 3-4 letter code for simplicity
                 string stockChoice = Console.ReadLine()!;
 
-                Console.WriteLine($"\n\tHow many shares would you like to {word1}? (I.E. 100): "); // supposed to be a fixed quantity but i left it variable
+                Console.WriteLine($"\n\tHow many shares would you like to {prefix1}? (I.E. 100): "); // supposed to be a fixed quantity but i left it variable
                 int Qty = Convert.ToInt32(Console.ReadLine());
 
-                Console.WriteLine($"\n\thow much will you {word2} per share?: ");
+                Console.WriteLine($"\n\thow much will you {prefix2} per share?: ");
                 double price = Convert.ToDouble(Console.ReadLine());
 
-                Console.WriteLine($"\n\n\t{word1}ing: " + Qty + "x shares of " + stockChoice + ", at $" + price + ".");
+                Console.WriteLine($"\n\n\t{prefix1}ing: " + Qty + "x shares of " + stockChoice + ", at $" + price + ".");
 
                 Exchange_Order newOrder = new Exchange_Order(buyOrSell, Qty, username, price, stockChoice);
                 SendOrder(channel, exchangeCode, newOrder);
